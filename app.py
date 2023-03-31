@@ -11,13 +11,12 @@ from dotenv import load_dotenv
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-DAILY_DILEMMAS_TIME = os.getenv('DAILY_DILEMMAS_TIME', '06:25')
+DAILY_DILEMMAS_TIME = os.getenv('DAILY_DILEMMAS_TIME', '10:00')
 load_dotenv()
 
 # Replace these with your desired dilemma and outcome
 dilemma = "Introspect 1: Imagine that you and your friends created a very popular product that revolutionized its market, generating over $1B per year. However, it was later discovered that it had unintended negative health consequences. What would you do? Would you keep selling or halt production? How would you communicate with the public?"
 outcome = "Today's dilemma is based on the company called Juul. In 2015, Juul was founded by a group of friends who created an e-cigarette that quickly gained widespread popularity, generating over $1 billion in annual revenue. However, it was later revealed that the product had negative health consequences such as addiction and respiratory problems. Despite this knowledge, Juul continued to aggressively market its product to young people, including those who had never smoked before. As a result, a surge in e-cigarette use among youth led to concerns about a potential public health crisis. In response, Juul faced significant legal and regulatory challenges and was accused of contributing to a new generation of nicotine addiction."
-feedback = "Read more about Juul here: https://www.theguardian.com/us-news/2022/sep/06/juul-teen-vaping-settlement-us-states Also, we'd love to hear feedback! What do you like about Introspect? What do you not like? What would you like to see? Feel free to reach out to us at cmatthe3@nd.edu or 302-333-2703. Until next time!"
 
 # Your Twilio credentials
 account_sid = os.getenv('TWILIO_ACCOUNT_SID')
@@ -66,8 +65,6 @@ def sms_reply():
 
     if message_body.strip().lower() == "done":
         resp.message(outcome)
-        time.sleep(2)
-        resp.message(feedback)
     else:
         resp.message("Message received. Send 'done' to finish and continue.")
 
