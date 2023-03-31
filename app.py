@@ -1,11 +1,14 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+from dotenv import load_dotenv
 import random
 import schedule
 import time
 import threading
-from dotenv import load_dotenv
 import os
+import json
+import threading
+
 
 load_dotenv()
 
@@ -28,6 +31,9 @@ dilemmas = [
 # Store user phone numbers and their last received dilemma
 user_data = {}
 
+# Create a lock for synchronizing access to the user_data dictionary
+user_data_lock = threading.Lock()
+
 def send_dilemma(phone_number):
     from twilio.rest import Client
 
@@ -44,7 +50,8 @@ def send_dilemma(phone_number):
     # Save the user's current dilemma
     user_data[phone_number] = {
         "dilemma": dilemma,
-        "waiting_for_guess": True
+        "waiting_for_guess": True,
+        "responses": []
     }
 
     # Send the dilemma to the user
@@ -79,17 +86,27 @@ def sms_reply():
         # Add the user and send them a dilemma
         send_dilemma(phone_number)
     else:
-        resp = MessagingResponse()
         if user_data[phone_number]["waiting_for_guess"]:
             # The user has sent their guess, now send the historical outcome
-            resp.message(user_data[phone_number]["dilemma"]["outcome"])
+            dilemma = user_data[phone_number]["dilemma"]
+            response = {"dilemma": dilemma["dilemma"], "response": message_body}
             user_data[phone_number]["waiting_for_guess"] = False
+            resp = MessagingResponse()
+            resp.message(dilemma["outcome"])
+            # Save the responses to a JSON file
+            with open('responses.json', 'a') as f:
+                json.dump(response, f)
+            # Lock the user_data dictionary before modifying it
+            with user_data_lock:
+                user_data[phone_number]["responses"].append(response)
         else:
             # The user has received the outcome, now send a new dilemma
             send_dilemma(phone_number)
             user_data[phone_number]["waiting_for_guess"] = True
+            resp = MessagingResponse()
 
         return str(resp)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5009)
