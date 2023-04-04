@@ -21,7 +21,7 @@ phone_numbers = read_phone_numbers(phone_numbers_file)
 
 # Your introduction message
 intro_message = (
-    "Hey, this is Christian, Dom, Jose, and Santiago. Thanks for signing up to the first MVP of the Introspect Chatbot. At 10 AM PST every day, Introspect will send you a philosophical dilemma. "
+    "Hey, this is Christian, Dom, Jose, and Santiago. Thanks for signing up to the first MVP of the Introspect Chatbot. Every day, Introspect will send you an ethical dilemma. "
     "Reply with what you would do as a daily exercise for yourself. When finished, type 'done' at the next message. "
     "We will store your answers so that you can come back to them in the future. "
     "We hope that this exercise will help you introspect about your values and encourage you to do good in the world."
